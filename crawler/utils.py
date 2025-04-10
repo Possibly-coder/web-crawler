@@ -1,6 +1,14 @@
 import re
 from bs4 import BeautifulSoup
 import requests
+from urllib.parse import urlparse
+
+# DOMAIN_PATTERNS = {
+#     "virgio.com": ["/shop/"],
+#     "tatacliq.com": ["/p/", "/product/"],
+#     "nykaafashion.com": ["/p/"],
+#     "westside.com": ["/product/", "/products/"],
+# }
 
 def get_internal_links(base_url, html):
     soup = BeautifulSoup(html, "html.parser")
@@ -13,9 +21,22 @@ def get_internal_links(base_url, html):
             links.add(full_url)
     return links
 
+
 def is_product_url(url):
-    patterns = [r"/product/", r"/p/", r"/item/"]
-    return any(re.search(pattern,url) for pattern in patterns)
+    path = urlparse(url).path.lower()
+
+    # These are general patterns found across most e-com sites
+    dynamic_patterns = [
+        "/product", "/item", "/p", "/shop", "/products",
+        "/store", "/buy", "/detail", "/prod", "/catalog"
+    ]
+
+    return any(pattern in path for pattern in dynamic_patterns)
+
+
+    # domain_patterns = DOMAIN_PATTERNS.get(domain.replace('www.', ''), default_patterns)
+    # patterns = [r"/product/", r"/p/", r"/item/"]
+    # return any(re.search(pattern,url) for pattern in patterns)
 
 def fetch_page(url):
     try:
