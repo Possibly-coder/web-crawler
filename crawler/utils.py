@@ -45,5 +45,5 @@ def fetch_page(url):
             return response.text
     except Exception as e:
         print(f"Error Fetching {url}, {e}")
-    return ""
+    return "NO URL available"
 
